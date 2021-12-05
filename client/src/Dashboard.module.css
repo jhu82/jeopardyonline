@@ -1,0 +1,12 @@
+.category-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.question-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: yellow;
+}
