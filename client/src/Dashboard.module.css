@@ -1,12 +1,16 @@
 .category-row {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    color: white;
 }
 
-.question-row {
+.questions {
     display: flex;
     flex-direction: row;
+}
+.question-column {
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    color: yellow;
+    color: #f6be18;
 }

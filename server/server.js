@@ -23,16 +23,20 @@ io.on('connection', socket => {
     console.log(message);
   })
 
+  //Logic and API calls to populate board with categories and clues
   socket.on('initialize', async () => {
     const seed = Math.floor(1000 + Math.random() * 15000);
     console.log(seed);
-    //Grab 5 random categories based on seed number
-    const url = `https://jservice.io/api/categories?count=5&offset=${seed}`
+    //Grab 6 random categories based on seed number
     try {
-        console.log('hello');
-        const categories = await axios.get(url);
-        console.log(categories);
+        const categories = await axios.get(`https://jservice.io/api/categories?count=6&offset=${seed}`);
         io.emit('categories', categories.data);
+        let questions = [];
+        await Promise.all(categories.data.map(async (category) => {
+          const categoryQuestions = await axios.get(`https://jservice.io/api/clues?category=${category.id}`);
+          questions.push(categoryQuestions.data.slice(0, 5));
+        }))
+        io.emit('questions', questions);
     }catch(e) {
         console.log(e);
     }
