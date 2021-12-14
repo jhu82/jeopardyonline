@@ -17,12 +17,13 @@ io.attach(http, {
   });
 
 io.on('connection', socket => {
-  console.log(socket.id)
-  socket.on('message', ({ name, message }) => {
-    io.emit('message', { name, message })
-    console.log(message);
-  })
+  console.log(socket.id);
+  socket.join("room");
+  io.to("room").emit('message', socket.id);
 
+  socket.on("buzzer", id => {
+    io.to("room").emit('message', `${id} has pressed the buzzer`);
+  })
   //Logic and API calls to populate board with categories and clues
   socket.on('initialize', async () => {
     const seed = Math.floor(1000 + Math.random() * 15000);
