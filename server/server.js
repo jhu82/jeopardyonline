@@ -14,24 +14,43 @@ io.attach(http, {
     pingInterval: 10000,
     pingTimeout: 5000,
     cookie: false
-  });
+});
+ 
+const generateRoomID = () => {
+  let roomID = '';
+  for (let i = 0; i < 3; i++) {
+    roomID += String.fromCharCode(60 + Math.random() * 26);
+  }
+  return roomID;
+}
 
-io.on('connection', socket => {
-  console.log(socket.id);
-  socket.join("room");
-  io.to("room").emit('message', socket.id);
+  io.on('connection', socket => {
 
-  socket.on("buzzer", id => {
-    io.to("room").emit('message', `${id} has pressed the buzzer`);
+  socket.on("create_room", () => {
+    const roomID = generateRoomID();
+    io.emit("room_created", roomID);
   })
+
+  socket.on("join_room", (roomID, name) => {
+    const roomSize = io.sockets.adapter.rooms.get(roomID).size;
+    if (roomSize < 3) {
+      socket.join(roomID);
+      const successMessage = `${name} has joined the room.`;
+      //Track roomSize so last to join calls initialize event, and generate the board.
+      io.emit("joined", successMessage, roomSize + 1);
+    } else {
+      const errorMessage = "Room is full. Please create or join a new room.";
+      io.emit("error", errorMessage);
+    }
+  })
+  
   //Logic and API calls to populate board with categories and clues
-  socket.on('initialize', async () => {
+  socket.on('initialize', async (roomID) => {
     const seed = Math.floor(1000 + Math.random() * 15000);
-    console.log(seed);
     //Grab 6 random categories based on seed number
     try {
         const categories = await axios.get(`https://jservice.io/api/categories?count=6&offset=${seed}`);
-        io.emit('categories', categories.data);
+        io.to(roomID).emit('categories', categories.data);
         let questions = [];
         await Promise.all(categories.data.map(async (category) => {
           const categoryQuestions = await axios.get(`https://jservice.io/api/clues?category=${category.id}`);
@@ -42,7 +61,13 @@ io.on('connection', socket => {
         console.log(e);
     }
   })
+
+  socket.on("buzzer", (roomID, name) => {
+    io.to(roomID).emit('message', `${name} has pressed the buzzer`);
+  })
+
 })
+
 
 
 http.listen(4000, function() {
