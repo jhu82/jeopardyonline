@@ -1,11 +1,11 @@
 import './App.css';
 import Dashboard from './Dashboard';
-import Session from './Session';
+import LandingPage from './LandingPage';
 
 function App() {
   return (
     <div className="App">
-        <Dashboard />
+        <LandingPage />
     </div>
   );
 }
