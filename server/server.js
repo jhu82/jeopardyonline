@@ -39,6 +39,7 @@ const generateRoomID = () => {
       const roomSize = room.size;
       if (roomSize < 3) {
         socket.join(roomID);
+        console.log(roomID);
         //Track roomSize so last to join calls initialize event, and generate the board.
         console.log(roomSize);
         io.to(roomID).emit("joined", roomID, roomSize + 1);

@@ -1,50 +1,41 @@
-import React, {useState, useEffect, useRef} from 'react';
-import io from 'socket.io-client';
+import React, { useState } from 'react';
+import NameForm from './NameForm';
+import RoomForm from './RoomForm';
 
-export default function LandingPage(props) {
-    const [room, setRoom] = useState("");
+export default function LandingPage({ socketRef }) {
+
     const [roomID, setRoomID] = useState("");
-	const socketRef = useRef()
+    const [name, setName] = useState("");
+    const [isName, setIsName] = useState(false);
 
-	useEffect(
-		() => {
-			socketRef.current = io.connect("http://localhost:4000");
-            socketRef.current.on("connect_error", (error) => {
-                console.log(error);
-            })
-			return () => socketRef.current.disconnect()
-		},
-		[]
-	)
-
-    const createRoom = async () => {
-        await socketRef.current.emit("create_room");
-        socketRef.current.on("joined", (roomID) => {
-            setRoom(roomID);
-        });
+    const handleCreateRoom = async () => {
+        await socketRef.current.emit("create_room", name);
     }
 
-    const joinRoom = async (event) => {
+    const handleJoinRoom = async (event) => {
         event.preventDefault();
-        await socketRef.current.emit("join_room", roomID);
-        socketRef.current.on("joined", (roomID, roomSize) => {
-            setRoom(roomID);
-            console.log(roomSize);
-        })
+        await socketRef.current.emit("join_room", roomID, name);
+    }
+
+    const handleSubmitName = (event) => {
+        event.preventDefault();
+        setIsName(true);
     }
 
     return(
         <div>
-            <button onClick={createRoom}>Create New Room</button>
-            <form onSubmit={joinRoom}>
-                <input 
-                    name="roomID" 
-                    placeholder="Room ID" 
-                    value={roomID} 
-                    onChange={e => {setRoomID(e.target.value)}} 
-                />
-                <input type="submit" />
-            </form>
+            { isName ?  <RoomForm 
+                            value={roomID}
+                            onChange={setRoomID}
+                            onSubmit={handleJoinRoom}
+                            onClick={handleCreateRoom}
+                        /> :  
+                        <NameForm
+                            value={name}
+                            onChange={setName}
+                            onSubmit={handleSubmitName}
+                        />
+            }
         </div>
     )
 }

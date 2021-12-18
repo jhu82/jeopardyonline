@@ -1,8 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
 import io from 'socket.io-client';
+import LandingPage from './LandingPage';
+import WaitingPage from './WaitingPage';
 
 export default function Session() {
-    const [messages, setMessage] = useState([]);
+    
+    const [room, setRoom] = useState({});
 	const socketRef = useRef()
 
 	useEffect(
@@ -11,26 +14,18 @@ export default function Session() {
             socketRef.current.on("connect_error", (error) => {
                 console.log(error);
             })
-            socketRef.current.on("message", (message) => {
-                console.log(message);
-                setMessage(messages => [...messages, message]);
+            socketRef.current.on("joined", (roomID, roomSize) => {
+                setRoom({"roomID": roomID, "roomSize": roomSize });
+                console.log(roomID);
             })
 			return () => socketRef.current.disconnect()
 		},
 		[]
 	)
-    const displayMessage = () => {
-        return messages.map(message => {
-            return <div>{message}</div>
-        })
-    }
-    const pressBuzzer = () => {
-        socketRef.current.emit("buzzer", messages[0]);
-    }
+
     return(
         <div>
-            {displayMessage()}
-            <button onClick={pressBuzzer}>Click Me</button>
+            <LandingPage socketRef={socketRef} />
         </div>
     )
 }
