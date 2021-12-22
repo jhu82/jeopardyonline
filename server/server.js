@@ -10,6 +10,9 @@ const io = require("socket.io")({
 });
 const axios = require("axios");
 
+
+const rooms = new Map();
+
 io.attach(http, {
     pingInterval: 10000,
     pingTimeout: 5000,
@@ -26,31 +29,53 @@ const generateRoomID = () => {
 
   io.on("connection", socket => {
     console.log(socket.id);
-    socket.on("create_room", () => {
+
+    socket.on("create_room", (name) => {
       const roomID = generateRoomID();
       socket.join(roomID);
-      const roomSize = 1;
-      io.to(roomID).emit("joined", roomID, roomSize);
+      const room = {
+        "roomID": roomID,
+        "players": [
+          {
+            "id": socket.id,
+            "name": name,
+            "money": 0,
+          }
+        ],
+        "hostID": socket.id,
+        "questions": [],
+      }
+      rooms.set(roomID, room);
+      console.log(roomID);
+      io.to(roomID).emit("joined", room);
     })
 
-    socket.on("join_room", (roomID) => {
-      const room = io.sockets.adapter.rooms.get(roomID);
-      if (!room) return io.emit("join_error", "Room ID does not exist.");
-      const roomSize = room.size;
+    socket.on("join_room", (roomID, name) => {
+      const room = rooms.get(roomID);
+      if (!room) return io.to(socket.id).emit("error", "Room ID does not exist.");
+      const roomSize = room.players.length;
       if (roomSize < 3) {
         socket.join(roomID);
         console.log(roomID);
-        //Track roomSize so last to join calls initialize event, and generate the board.
         console.log(roomSize);
-        io.to(roomID).emit("joined", roomID, roomSize + 1);
+        const newPlayer = {
+          "id": socket.id,
+          "name": name,
+          "money": 0,
+        }
+        const updatedRoom = {...room, players: [...room.players, newPlayer ]};
+        rooms.set(roomID, updatedRoom);
+        console.log(updatedRoom);
+        io.to(roomID).emit("joined", updatedRoom);
       } else {
-        io.emit("join_error", "Room is full. Please create or join a new room.");
+        io.to(socket.id).emit("error", "Room is full. Please create or join a new room.");
       }
     })
 
     //Logic and API calls to populate board with categories and clues
     socket.on('initialize', async (roomID) => {
       const seed = Math.floor(1000 + Math.random() * 15000);
+      const room = rooms.get(roomID);
       //Grab 6 random categories based on seed number
       try {
           const url = `https://jservice.io/api/categories?count=6&offset=${seed}`
@@ -62,7 +87,9 @@ const generateRoomID = () => {
             const categoryQuestions = await axios.get(url);
             questions.push(categoryQuestions.data.slice(0, 5));
           }))
-          io.emit("questions", questions);
+          const updatedRoom = {...room, questions: questions };
+          rooms.set(roomID, updatedRoom);
+          io.to(roomID).emit("questions", updatedRoom);
       } catch(e) {
           console.log(e);
       }

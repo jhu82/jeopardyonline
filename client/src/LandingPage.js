@@ -25,15 +25,15 @@ export default function LandingPage({ socketRef }) {
     return(
         <div>
             { isName ?  <RoomForm 
-                            value={roomID}
-                            onChange={setRoomID}
-                            onSubmit={handleJoinRoom}
-                            onClick={handleCreateRoom}
+                            value = {roomID}
+                            onChange = {setRoomID}
+                            onSubmit = {handleJoinRoom}
+                            onClick  = {handleCreateRoom}
                         /> :  
                         <NameForm
-                            value={name}
-                            onChange={setName}
-                            onSubmit={handleSubmitName}
+                            value = {name}
+                            onChange = {setName}
+                            onSubmit = {handleSubmitName}
                         />
             }
         </div>
