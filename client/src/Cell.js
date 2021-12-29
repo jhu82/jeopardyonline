@@ -10,7 +10,7 @@ export default function Cell({ question, value }) {
         else setClicked(false);
     }
     return (
-        <div className={styles['cell']} onClick={handleClick}>
+        <div className={clicked ? `${styles['cell']} ${styles['fullscreen']}` : styles['cell']} onClick={handleClick}>
             <h1>{!clicked && value}</h1>
             {clicked && <Question question={question} />}
         </div>

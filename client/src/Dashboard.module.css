@@ -1,16 +1,23 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+}
 .category-row {
     display: flex;
     flex-direction: row;
+    align-self: center;
     color: white;
 }
-
 .questions {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-self: center;
 }
 .question-column {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-self: center;
     color: #f6be18;
 }

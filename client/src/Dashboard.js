@@ -21,7 +21,7 @@ export default function Dashboard({ room, socketRef }) {
                                     </div> 
                             })
     return (
-        <div>
+        <div className={styles['dashboard']}>
             <div className={styles['category-row']}>
                 {categoryRow}
             </div>
