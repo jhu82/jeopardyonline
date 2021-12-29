@@ -8,14 +8,14 @@ export default function Dashboard({ room, socketRef }) {
     const values = [200, 400, 600, 800, 1000];
 
     const categoryRow = room.questions.map(question => {
-                            return <Cell key={question[0].category.id} value={question[0].category.title} />
+                            const title = question[0].category.title.toUpperCase();
+                            return <Cell key={question[0].category.id} value={title} />
                         })
 
     const questionColumns = room.questions.map(category => {
                             return <div className={styles['question-column']}> {
                                         category.map(question => {
-                                            console.log(question);
-                                            return <Cell key={question.id} value={question.value} question={question.question}/> 
+                                            return <Cell key={question.id} value={`$${question.value}`} question={question.question}/> 
                                         })
                                     }
                                     </div> 
