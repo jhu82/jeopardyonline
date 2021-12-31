@@ -30,12 +30,12 @@ export default function Session() {
 	)
 
     return(
-        <div>
+        <>
             { room ? room.questions.length !== 0 ? 
                                         <DashBoard   room={room} socketRef={socketRef} /> :
                                         <WaitingPage room={room} socketRef={socketRef} /> :
                                         <LandingPage socketRef={socketRef} /> 
             }
-        </div>
+        </>
     )
 }
