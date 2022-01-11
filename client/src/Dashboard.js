@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
-import io from 'socket.io-client';
+import React from 'react';
 import Cell from './Cell';
 import styles from './Dashboard.module.css';
 
@@ -10,14 +9,21 @@ export default function Dashboard({ room, socketRef }) {
 
     const categoryRow = room.questions.map(question => {
                             const title = question[0].category.title.toUpperCase();
-                            return <Cell key={question[0].category.id} value={title} />
+                            return <Cell key={question[0].category.id} 
+                                         type='category' 
+                                         value={title} 
+                                    />
                         })
 
     const questionColumns = room.questions.map(category => {
                             let index = 0;
                             return <div className={styles['question-column']}> {
                                         category.map(question => {
-                                            return <Cell key={question.id} value={`$${firstValues[index++]}`} question={question.question}/> 
+                                            return <Cell key={question.id} 
+                                                         type='question'
+                                                         value={`$${firstValues[index++]}`} 
+                                                         question={question.question}
+                                                    /> 
                                         })
                                     }
                                     </div> 

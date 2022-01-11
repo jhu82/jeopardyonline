@@ -9,20 +9,19 @@
 .category-row {
     display: flex;
     flex-direction: row;
-    border-bottom: 3px solid black;
     color: white;
-    padding: 0;
     width: 100%;
     height: 100%;
     flex: 1 1;
-    font-size: 12px;
+    font-size: 15px;
 }
 .questions {
     display: flex;
     flex-direction: row;
     width: 100%;
     flex: 5 1;
-    font-size: 17px;
+    font-size: 27px;
+    text-shadow: 3px 3px black;
 }
 .question-column {
     display: flex;

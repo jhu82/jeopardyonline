@@ -1,0 +1,30 @@
+.landing-page {
+    height: 100%;
+    width: 100%;
+    background-color: blue;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-page input[type=text] {
+    margin: 10px;
+    padding: 17px;
+    border-radius: 20px;
+    box-shadow: 0 0 4px 4px blue;
+    font-size: 17px;
+    border: none;
+}
+
+.landing-page input[type=text]:focus {
+    outline: none;
+}
+
+.landing-page button {
+    margin: 10px;
+    padding: 17px;
+    border-radius: 20px;
+    font-size: 17px;
+    background: #f6be18;
+    color: blue;
+    border: none;
+}

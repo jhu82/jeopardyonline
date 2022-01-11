@@ -1,5 +1,5 @@
 import React from 'react';
-import io from 'socket.io-client';
+import styles from './WaitingPage.module.css';
 
 export default function WaitingPage({room, socketRef}) {
 
@@ -14,7 +14,7 @@ export default function WaitingPage({room, socketRef}) {
     }
 
     return(
-        <div>
+        <div className={styles['waiting-page']}>
             <div>
                 {room.roomID}
             </div>

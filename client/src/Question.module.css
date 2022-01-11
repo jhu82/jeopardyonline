@@ -1,5 +1,7 @@
 .question {
-    margin: 0 auto;
+    margin: 10px;
     position: absolute;
     top: 30%;
+    max-width: 85%;
+    color: white;
 }

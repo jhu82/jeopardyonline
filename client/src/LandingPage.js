@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NameForm from './NameForm';
 import RoomForm from './RoomForm';
+import styles from './LandingPage.module.css';
 
 export default function LandingPage({ socketRef }) {
 
@@ -23,7 +24,7 @@ export default function LandingPage({ socketRef }) {
     }
 
     return(
-        <div>
+        <div className={styles['landing-page']}>
             { isName ?  <RoomForm 
                             value = {roomID}
                             onChange = {setRoomID}

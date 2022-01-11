@@ -6,12 +6,12 @@ export default function RoomForm({ value, onChange, onSubmit, onClick }) {
             <button onClick={onClick}>Create New Room</button>
             <form onSubmit={onSubmit}>
                 <input 
+                    type="text"
                     name="roomID" 
-                    placeholder="Room ID" 
+                    placeholder="Enter Room ID" 
                     value={value} 
                     onChange={e => {onChange(e.target.value)}} 
                 />
-                <input type="submit" />
             </form>
         </div>
     )

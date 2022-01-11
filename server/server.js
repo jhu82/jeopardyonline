@@ -74,8 +74,10 @@ const generateRoomID = () => {
 
     //Logic and API calls to populate board with categories and clues
     socket.on('initialize', async (roomID) => {
-      const seed = Math.floor(1000 + Math.random() * 15000);
       const room = rooms.get(roomID);
+      const roomSize = room.players.length;
+      if (roomSize < 1) return;
+      const seed = Math.floor(1000 + Math.random() * 15000);
       //Grab 6 random categories based on seed number
       try {
           const url = `https://jservice.io/api/categories?count=6&offset=${seed}`
