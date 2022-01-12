@@ -10,6 +10,7 @@ export default function RoomForm({ value, onChange, onSubmit, onClick }) {
                     name="roomID" 
                     placeholder="Enter Room ID" 
                     value={value} 
+                    autocomplete="off"
                     onChange={e => {onChange(e.target.value)}} 
                 />
             </form>

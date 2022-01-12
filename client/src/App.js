@@ -1,5 +1,4 @@
 import './App.css';
-import Dashboard from './Dashboard';
 import Session from './Session';
 
 function App() {

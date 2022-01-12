@@ -25,14 +25,18 @@ export default function LandingPage({ socketRef }) {
 
     return(
         <div className={styles['landing-page']}>
+            <div className={styles['logo']}>
+                <img src="jeopardy.png" alt="" />
+            </div>
+            <h1>An online multiplayer game!</h1>
             { isName ?  <RoomForm 
-                            value = {roomID}
+                            value    = {roomID}
                             onChange = {setRoomID}
                             onSubmit = {handleJoinRoom}
                             onClick  = {handleCreateRoom}
                         /> :  
                         <NameForm
-                            value = {name}
+                            value    = {name}
                             onChange = {setName}
                             onSubmit = {handleSubmitName}
                         />

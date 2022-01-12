@@ -7,8 +7,9 @@ export default function NameForm({ value, onChange, onSubmit }) {
                 <input
                     type="text"
                     name="name"
-                    placeholder="Nickname"
+                    placeholder="Enter Nickname"
                     value={value}
+                    autocomplete="off"
                     onChange={e => {onChange(e.target.value)}}
                 />
             </form>

@@ -1,9 +1,12 @@
 .landing-page {
     height: 100%;
     width: 100%;
+    min-height: 500px;
+    min-width: 1000px;
     background-color: blue;
     display: flex;
     flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .landing-page input[type=text] {
@@ -17,6 +20,12 @@
 
 .landing-page input[type=text]:focus {
     outline: none;
+}
+
+.landing-page img {
+    height: 200px;
+    width: 800px;
+    margin: 50px 50px;
 }
 
 .landing-page button {
