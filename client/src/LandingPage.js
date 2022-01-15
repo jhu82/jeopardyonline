@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import NameForm from './NameForm';
-import RoomForm from './RoomForm';
 import styles from './LandingPage.module.css';
 
 export default function LandingPage({ socketRef }) {
@@ -23,24 +21,42 @@ export default function LandingPage({ socketRef }) {
         setIsName(true);
     }
 
+    const roomForm = () => {
+        return <div>
+                    <button onClick={handleCreateRoom}>Create New Room</button>
+                    <form onSubmit={handleJoinRoom}>
+                        <input 
+                            type="text"
+                            name="roomID" 
+                            placeholder="Enter Room ID" 
+                            value={roomID} 
+                            autoComplete="off"
+                            onChange={e => {setRoomID(e.target.value)}} 
+                        />
+                    </form>
+                </div>
+    }
+
+    const nameForm = () => {
+        return  <div>
+                    <form onSubmit={handleSubmitName}>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Enter Nickname"
+                            value={name}
+                            autoComplete="off"
+                            onChange={e => {setName(e.target.value)}}
+                        />
+                    </form>
+                </div>
+    }
     return(
         <div className={styles['landing-page']}>
             <div className={styles['logo']}>
                 <img src="jeopardy.png" alt="" />
             </div>
-            <h1>An online multiplayer game!</h1>
-            { isName ?  <RoomForm 
-                            value    = {roomID}
-                            onChange = {setRoomID}
-                            onSubmit = {handleJoinRoom}
-                            onClick  = {handleCreateRoom}
-                        /> :  
-                        <NameForm
-                            value    = {name}
-                            onChange = {setName}
-                            onSubmit = {handleSubmitName}
-                        />
-            }
+            { isName ?  roomForm() : nameForm() }
         </div>
     )
 }

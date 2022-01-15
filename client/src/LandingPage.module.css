@@ -6,15 +6,15 @@
     background-color: blue;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
 }
 
 .landing-page input[type=text] {
-    margin: 10px;
-    padding: 17px;
+    padding: 17px 0px;
     border-radius: 20px;
     box-shadow: 0 0 4px 4px blue;
     font-size: 17px;
+    text-align: center;
     border: none;
 }
 
@@ -25,12 +25,12 @@
 .landing-page img {
     height: 200px;
     width: 800px;
-    margin: 50px 50px;
+    margin: 100px 50px;
 }
 
 .landing-page button {
     margin: 10px;
-    padding: 17px;
+    padding: 17px 24px;
     border-radius: 20px;
     font-size: 17px;
     background: #f6be18;

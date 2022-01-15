@@ -5,7 +5,7 @@ export default function WaitingPage({room, socketRef}) {
 
     const displayJoinedPlayers = () => {
         return room.players.map(player => {
-            return <div key={player.id}>{player.name} has joined</div>
+            return <p key={player.id}>{player.name} has joined</p>
         })
     }
 
@@ -15,13 +15,12 @@ export default function WaitingPage({room, socketRef}) {
 
     return(
         <div className={styles['waiting-page']}>
-            <div>
-                {room.roomID}
+            <div className={styles['logo']}>
+                <img src="jeopardy.png" alt="" />
             </div>
             <div>
+                <h1>{room.roomID}</h1>
                 {displayJoinedPlayers()}
-            </div>
-            <div>
                 <button className="start-button" onClick={() => startGame()}>START GAME</button>
             </div>
         </div>
