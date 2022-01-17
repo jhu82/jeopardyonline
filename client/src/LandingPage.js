@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './LandingPage.module.css';
+import Page from './Page.js';
 
 export default function LandingPage({ socketRef }) {
 
@@ -52,11 +52,8 @@ export default function LandingPage({ socketRef }) {
                 </div>
     }
     return(
-        <div className={styles['landing-page']}>
-            <div className={styles['logo']}>
-                <img src="jeopardy.png" alt="" />
-            </div>
+        <Page>
             { isName ?  roomForm() : nameForm() }
-        </div>
+        </Page>
     )
 }

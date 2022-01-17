@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './WaitingPage.module.css';
+import Page from './Page.js';
 
 export default function WaitingPage({room, socketRef}) {
 
@@ -14,15 +14,12 @@ export default function WaitingPage({room, socketRef}) {
     }
 
     return(
-        <div className={styles['waiting-page']}>
-            <div className={styles['logo']}>
-                <img src="jeopardy.png" alt="" />
-            </div>
+        <Page>
             <div>
                 <h1>{room.roomID}</h1>
                 {displayJoinedPlayers()}
                 <button className="start-button" onClick={() => startGame()}>START GAME</button>
             </div>
-        </div>
+        </Page>
     )
 }

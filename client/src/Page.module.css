@@ -1,39 +1,39 @@
-.landing-page {
+.page {
     height: 100%;
     width: 100%;
     min-height: 500px;
     min-width: 1000px;
-    background-color: blue;
+    background-color: var(--jeopardy-blue);
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.landing-page input[type=text] {
+.page input[type=text] {
     padding: 17px 0px;
     border-radius: 20px;
-    box-shadow: 0 0 4px 4px blue;
+    box-shadow: 0 0 4px 4px var(--jeopardy-blue);
     font-size: 17px;
     text-align: center;
     border: none;
 }
 
-.landing-page input[type=text]:focus {
+.page input[type=text]:focus {
     outline: none;
 }
 
-.landing-page img {
+.page img {
     height: 200px;
     width: 800px;
     margin: 100px 50px;
 }
 
-.landing-page button {
+.page button {
     margin: 10px;
     padding: 17px 24px;
     border-radius: 20px;
     font-size: 17px;
     background: #f6be18;
-    color: blue;
+    color: var(--jeopardy-blue);
     border: none;
 }
