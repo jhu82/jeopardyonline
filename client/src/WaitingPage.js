@@ -1,5 +1,5 @@
 import React from 'react';
-import Page from './Page.js';
+import Page from './Page';
 
 export default function WaitingPage({room, socketRef}) {
 

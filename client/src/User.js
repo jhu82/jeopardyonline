@@ -1,35 +1,25 @@
-import React, {useState, useEffect, useRef} from 'react';
-import  io from 'socket.io-client';
+import React from 'react';
+import styles from './User.module.css';
 
-export default function Connection() {
-    const [ categories, setCategories ] = useState([]);
+export default function User({player, isHost}) {
 
-	const socketRef = useRef()
+    const playerType = isHost ? 'host' : 'guest';
 
-	useEffect(
-		() => {
-			socketRef.current = io.connect("http://localhost:4000");
-            socketRef.current.on("connect_error", (error) => {
-                console.log(error);
-            })
-            socketRef.current.emit("initialize");
-            socketRef.current.on("categories", (categories) => {
-                setCategories(categories);
-            })
-			return () => socketRef.current.disconnect()
-		},
-		[]
-	)
-
-    const renderCategories = () => {
-        return categories.map(category => 
-            <div key={category.id}>{category.title}</div>
-        )
+    const formatMoney = (money) => {
+        let moneyString = money >= 0 ? '$' : '-$';
+        if (money < 0) money = 0 - money;
+        moneyString = moneyString + money.toLocaleString();        
+        return moneyString;
     }
 
-    return (
-		<div>
-            {renderCategories()}
+    return(
+        <div className={styles['user']}>
+            <h4 className={styles[playerType]}>
+                {player.name}
+            </h4>
+            <p1>
+                {formatMoney(player.money)}
+            </p1>
         </div>
-    );
+    )
 }

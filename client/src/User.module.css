@@ -1,0 +1,22 @@
+.user {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1 1;
+    padding: 11px;
+    box-sizing: border-box;
+    border-left: 4px solid black;
+    border-bottom: 4px solid black;
+    background: linear-gradient(165deg, var(--jeopardy-blue), #3b2ba7);
+    font-size: 25px;
+}
+
+.guest {
+    color: white;
+    margin: 5px;
+}
+
+.host {
+    color: red;
+    margin: 5px;
+}

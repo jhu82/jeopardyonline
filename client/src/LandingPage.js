@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Page from './Page.js';
+import Page from './Page';
 
 export default function LandingPage({ socketRef }) {
 
