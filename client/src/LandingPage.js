@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Buzzer from './Buzzer';
 import Page from './Page';
 
 export default function LandingPage({ socketRef }) {
@@ -54,6 +55,7 @@ export default function LandingPage({ socketRef }) {
     return(
         <Page>
             { isName ?  roomForm() : nameForm() }
+            <Buzzer></Buzzer>
         </Page>
     )
 }

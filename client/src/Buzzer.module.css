@@ -1,0 +1,10 @@
+.buzzer {
+    height: 25px;
+    width: 25px;
+    background-color: rgb(192, 9, 9);
+    border-radius: 50%;
+}
+
+.buzzer:hover {
+    background-color: rgb(233, 106, 106);
+}

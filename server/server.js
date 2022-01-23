@@ -1,4 +1,3 @@
-const app = require("express")()
 const http = require("http").createServer()
 const io = require("socket.io")({
     cors: {
@@ -28,7 +27,6 @@ const generateRoomID = () => {
 }
 
   io.on("connection", socket => {
-    console.log(socket.id);
 
     socket.on("create_room", (name) => {
       const roomID = generateRoomID();
@@ -44,6 +42,7 @@ const generateRoomID = () => {
         ],
         "hostID": socket.id,
         "questions": [],
+        "timer": null
       }
       rooms.set(roomID, room);
       console.log(roomID);
@@ -87,8 +86,14 @@ const generateRoomID = () => {
           await Promise.all(categories.data.map(async (category) => {
             const url = `https://jservice.io/api/clues?category=${category.id}`
             const categoryQuestions = await axios.get(url);
-            questions.push(categoryQuestions.data.slice(0, 5));
+            let index = 1;
+            questions.push(categoryQuestions.data.slice(0, 5).map((question) => {
+              question.answered = false;
+              question.value = 200 * index++;
+              return question;
+            }));
           }))
+          console.log(questions);
           const updatedRoom = {...room, questions: questions };
           rooms.set(roomID, updatedRoom);
           io.to(roomID).emit("questions", updatedRoom);
@@ -97,8 +102,38 @@ const generateRoomID = () => {
       }
     })
 
-    socket.on("buzzer", (roomID, name) => {
-      io.to(roomID).emit("message", `${name} has pressed the buzzer`);
+    socket.on('question_selected', (roomID, questionID) => {
+      const room = rooms.get(roomID);
+      console.log(room.questions);
+      console.log(questionID);
+      const question = room.questions.find(question => {return question.id === questionID});
+      io.to(roomID).emit("question_sent", question.id);
+      room.timer = setTimeout(() => {
+        const message = `The correct answer is ${question.answer}.`
+        question.answered = true;
+        io.to(roomID).emit("question_end", room, message);
+      }, 5000);
+    })
+
+    socket.on("buzzer", (roomID, name, questionID) => {
+      const room = rooms.get(roomID);
+      clearTimeout(room.timer);
+      const message = `${name} is answering...`;
+      io.to(roomID).emit("buzzer_pressed", message);
+      const question = room.questions.find(question => {return question.id === questionID});
+
+    })
+
+    socket.on("answering", (roomID, socketID, question) => {
+
+    })
+    socket.on("clear", (roomID) => {
+      const room = rooms.get(roomID);
+      console.log("I am clearing the timer");
+      clearTimeout(room.timer);
+      room.timer = setTimeout(() => {
+        console.log("aww yes");
+      })
     })
 })
 
