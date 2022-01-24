@@ -55,7 +55,6 @@ export default function LandingPage({ socketRef }) {
     return(
         <Page>
             { isName ?  roomForm() : nameForm() }
-            <Buzzer></Buzzer>
         </Page>
     )
 }

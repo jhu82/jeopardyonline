@@ -1,3 +1,19 @@
+.question-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; 
+    width: 100vw; 
+    height: 100vh; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 3.5rem;
+    text-shadow: 0 0;
+    background-color: var(--jeopardy-blue);
+}
+
 .question {
     margin: 10px;
     position: absolute;

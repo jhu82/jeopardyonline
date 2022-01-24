@@ -19,6 +19,9 @@ export default function Session() {
             socketRef.current.on("questions", (room) => {
                 setRoom(room);
             })
+            socketRef.current.on("update_room", (room) => {
+                setRoom(room);
+            })
             socketRef.current.on("error", (error) => {
                 alert(error);
             })
