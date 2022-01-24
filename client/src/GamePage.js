@@ -10,29 +10,38 @@ import User from './User';
 export default function GamePage({ room, socketRef }) {
     
     const [selectedQuestion, setSelectedQuestion] = useState();
-    const [gameState, setGameState] = useState("");
     const [message, setMessage] = useState("");
+    const [playerAnswering, setPlayerAnswering] = useState("");
     const [haveAnswered, setHaveAnswered] = useState(false);
     const [answer, setAnswer] = useState("");
 
     useEffect(
         () => {
             socketRef.current.on("question_sent", (question) => {
+                setMessage("");
                 setSelectedQuestion(question);
             })
-            socketRef.current.on("question_ending", (message) => {
+            socketRef.current.on("message", (message) => {
                 setMessage(message);
             })
             socketRef.current.on("question_end", () => {
                 setSelectedQuestion();
-                setMessage(message);
+                setMessage("");
+                setPlayerAnswering("");
                 setHaveAnswered(false);
             })
-            socketRef.current.on("buzzer_pressed", (message) => {
-                setMessage(message);
+            socketRef.current.on("buzzer_pressed", (playerID) => {
+                setPlayerAnswering(playerID);
             })
+            socketRef.current.on("incorrect_answer", () => {
+                setPlayerAnswering("");
+                socketRef.current.emit("question_selected", room.roomID, selectedQuestion.id);
+            })
+            return () => {
+                socketRef.current.off("incorrect_answer");
+            }
         }, 
-        []
+        [selectedQuestion]
     )
 
     const handleQuestionClick = (question) => {
@@ -81,6 +90,7 @@ export default function GamePage({ room, socketRef }) {
                             })
     
     const answerForm = () => {
+        if (!playerAnswering === socketRef.current.id) return;
         return  <div>
                     <form onSubmit={handleAnswerInput}>
                         <input
@@ -100,7 +110,6 @@ export default function GamePage({ room, socketRef }) {
             {selectedQuestion ? <QuestionCard 
                                     question={selectedQuestion}
                                     message={message}
-                                    gameState={gameState}
                                     answer={answerForm()}
                                     buzzer={
                                         <Buzzer 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Buzzer from './Buzzer';
 import styles from './QuestionCard.module.css';
 
-export default function QuestionCard({ question, message, buzzer }) {
+export default function QuestionCard({ question, message, answer, buzzer }) {
 
     return (
         <div className={styles['question-card']}>
@@ -13,6 +13,7 @@ export default function QuestionCard({ question, message, buzzer }) {
                 {message}
             </div>
             {buzzer}
+            {answer}
         </div>
     )
 }

@@ -20,6 +20,7 @@ export default function Session() {
                 setRoom(room);
             })
             socketRef.current.on("update_room", (room) => {
+                console.log("Hello");
                 setRoom(room);
             })
             socketRef.current.on("error", (error) => {

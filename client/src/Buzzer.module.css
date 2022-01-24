@@ -1,8 +1,10 @@
 .buzzer {
-    height: 25px;
-    width: 25px;
+    height: 100px;
+    width: 100px;
     background-color: rgb(192, 9, 9);
     border-radius: 50%;
+    position: absolute;
+    top: 60%;
 }
 
 .buzzer:hover {
