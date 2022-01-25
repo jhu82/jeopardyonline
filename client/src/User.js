@@ -17,9 +17,9 @@ export default function User({player, isHost}) {
             <h4 className={styles[playerType]}>
                 {player.name}
             </h4>
-            <p1>
+            <div>
                 {formatMoney(player.money)}
-            </p1>
+            </div>
         </div>
     )
 }

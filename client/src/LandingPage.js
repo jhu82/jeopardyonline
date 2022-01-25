@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Buzzer from './Buzzer';
 import Page from './Page';
 
 export default function LandingPage({ socketRef }) {

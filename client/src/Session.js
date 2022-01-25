@@ -28,6 +28,9 @@ export default function Session() {
             socketRef.current.on("disconnect", () => {
                 setRoom("");
             })
+            socketRef.current.on("exit_room", () => {
+                setRoom("");
+            })
 			return () => {
                 socketRef.current.disconnect()
             }

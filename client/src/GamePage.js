@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import GameBoard from './GameBoard';
-import CategoryCell from './CategoryCell';
-import QuestionCell from './QuestionCell';
 import QuestionCard from './QuestionCard';
 import Buzzer from './Buzzer';
-import styles from './GameBoard.module.css';
-import User from './User';
 
 export default function GamePage({ room, socketRef }) {
     
     const [selectedQuestion, setSelectedQuestion] = useState();
     const [message, setMessage] = useState("");
-    const [playerAnswering, setPlayerAnswering] = useState("");
+    const [playerAnswering, setPlayerAnswering] = useState({isPlayerAnswering: false, playerID: ""});
     const [haveAnswered, setHaveAnswered] = useState(false);
     const [answer, setAnswer] = useState("");
 
     const resetState = () => {
         setSelectedQuestion();
         setMessage("");
-        setPlayerAnswering("");
+        setPlayerAnswering({isPlayerAnswering: false, playerID: ""});
         setHaveAnswered(false);
+        setAnswer("");
     }
 
     useEffect(
@@ -30,8 +27,7 @@ export default function GamePage({ room, socketRef }) {
             })
             socketRef.current.on("message", (message, state) => {
                 if (state === "disable_input") {
-                    if (playerAnswering === socketRef.current.id) setPlayerAnswering("");
-                    setAnswer("");
+                    setPlayerAnswering({isPlayerAnswering: true, playerID: ""});
                 } else if (state === "disable_buzzer") {
                     setHaveAnswered(true);
                 }
@@ -41,11 +37,11 @@ export default function GamePage({ room, socketRef }) {
                 resetState();
             })
             socketRef.current.on("buzzer_pressed", (playerID) => {
-                setPlayerAnswering(playerID);
+                setPlayerAnswering({isPlayerAnswering: true, playerID: playerID});
             })
             socketRef.current.on("incorrect_answer", () => {
-                setPlayerAnswering("");
-                socketRef.current.emit("question_selected", room.roomID, selectedQuestion.id);
+                setPlayerAnswering({isPlayerAnswering: false, playerID: ""});
+                socketRef.current.emit("question_selected", selectedQuestion.id);
             })
             return () => {
                 socketRef.current.off("incorrect_answer");
@@ -56,49 +52,18 @@ export default function GamePage({ room, socketRef }) {
 
     const handleQuestionClick = (question) => {
         if (question.answered || room.hostID !== socketRef.current.id) return;
-        socketRef.current.emit("question_selected", room.roomID, question.id);
+        socketRef.current.emit("question_selected", question.id);
     }
 
     const handleAnswerInput = (event) => {
         event.preventDefault();
-        socketRef.current.emit("player_answered", room.roomID, selectedQuestion.id, answer);
+        socketRef.current.emit("player_answered", selectedQuestion.id, answer);
     }
 
     const handleBuzzerClick = () => {
-        socketRef.current.emit("buzzer_pressed", room.roomID, selectedQuestion.id);
+        socketRef.current.emit("buzzer_pressed", selectedQuestion.id);
         setHaveAnswered(true);
     }
-
-    const categoryRow = room.questions.map(question => {
-                            const title = question[0].category.title.toUpperCase();
-                            return <CategoryCell 
-                                         key={question[0].category.id} 
-                                         value={title}
-                                    />
-                        })
-
-    const userRow = room.players.map(player => {
-                        return <User 
-                                     key={player.id}
-                                     player={player}
-                                     isHost={player.id === room.hostID}
-                                />
-                        })
-    
-
-    const questionColumns = room.questions.map(category => {   
-                                return <div className={styles['question-column']}>
-                                            {category.map(question => {
-                                                return <QuestionCell 
-                                                                key={question.id} 
-                                                                value={question.value}
-                                                                onClick={() => handleQuestionClick(question)}
-                                                                question={question}
-                                                        /> 
-                                                })
-                                            }
-                                        </div>
-                            })
     
     const answerForm = (
                         <form onSubmit={handleAnswerInput}>
@@ -118,18 +83,19 @@ export default function GamePage({ room, socketRef }) {
             {selectedQuestion ? <QuestionCard 
                                     question={selectedQuestion}
                                     message={message}
-                                    answer={(playerAnswering === socketRef.current.id) && answerForm}
+                                    answer={(playerAnswering.playerID === socketRef.current.id) && answerForm}
                                     buzzer={
                                         <Buzzer 
                                             handleClick={() => handleBuzzerClick()}
-                                            enabled={!playerAnswering && !haveAnswered}
+                                            enabled={!playerAnswering.isPlayerAnswering && !haveAnswered}
                                         />
                                     }
                                 /> :
                                 <GameBoard
-                                    categories={categoryRow}
-                                    questions={questionColumns}
-                                    users={userRow}
+                                    questions={room.questions}
+                                    players={room.players}
+                                    hostID={room.hostID}
+                                    handleQuestionClick={handleQuestionClick}
                                 />
             }
         </>

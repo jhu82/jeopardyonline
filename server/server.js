@@ -39,6 +39,7 @@ const compareAnswer = (playerAnswer, correctAnswer) => {
 
 io.on("connection", socket => {
 
+  let roomID = "";
   /*
     Socket listener for generating room for players to join
 
@@ -46,7 +47,7 @@ io.on("connection", socket => {
     @emit joined: intial room instance sent to client reflecting room has been created
   */
   socket.on("create_room", (name) => {
-    const roomID = generateRoomID();
+    roomID = generateRoomID();
     socket.join(roomID);
     const room = {
       "roomID": roomID,
@@ -67,11 +68,12 @@ io.on("connection", socket => {
   /*
     Socket listener, waiting for clients to join an existing room if room size is less than 3. 
 
-    @params roomID: ID of room client is attempting to join.
+    @params _roomID: ID of room client is attempting to join.
     @params name: name of the client who is attempting to join room.
     @emit joined: updated room instance is sent to all clients in room reflecting who has joined
   */
-  socket.on("join_room", (roomID, name) => {
+  socket.on("join_room", (_roomID, name) => {
+    roomID = _roomID;
     const room = rooms.get(roomID);
     if (!room) return io.to(socket.id).emit("error", "Room ID does not exist.");
     const roomSize = room.players.length;
@@ -99,7 +101,7 @@ io.on("connection", socket => {
     @params roomID: ID of the room for the game instance to be populated.
     @emit questions: emit to client room updated with questions, grabbed from API
   */
-  socket.on("initialize", async (roomID) => {
+  socket.on("initialize", async () => {
     const room = rooms.get(roomID);
     const roomSize = room.players.length;
     if (roomSize < 1) return;
@@ -140,7 +142,7 @@ io.on("connection", socket => {
     @emit update_room: sends updated room reflecting current game state
   */
 
-  socket.on("question_selected", (roomID, questionID) => {
+  socket.on("question_selected", (questionID) => {
     const room = rooms.get(roomID);
     const question = findQuestion(room.questions, questionID);
     clearTimeout(room.timer);
@@ -166,7 +168,7 @@ io.on("connection", socket => {
     @emit message: updates all clients that the player who pressed the buzzer is unable to answer the question. 
     @emit incorrect_answer: updates all clients that the incorrect answer was provided
   */
-  socket.on("buzzer_pressed", (roomID, questionID) => {
+  socket.on("buzzer_pressed", (questionID) => {
     const room = rooms.get(roomID);
     clearTimeout(room.timer);
     const question = findQuestion(room.questions, questionID);
@@ -195,7 +197,7 @@ io.on("connection", socket => {
     @emit question_end: notifies clients that the question is ended so they can update their state accordingly
     @emit update_room: sends updated room reflecting current game state
   */
-  socket.on("player_answered", (roomID, questionID, answer) => {
+  socket.on("player_answered", (questionID, answer) => {
     const room = rooms.get(roomID);
     clearTimeout(room.timer);
     const question = findQuestion(room.questions, questionID);
@@ -218,6 +220,15 @@ io.on("connection", socket => {
         io.to(roomID).emit("incorrect_answer");
       }, 5000);
     }
+  })
+
+  /*
+    Socket listener for handling if a user disconnects. Room is removed if another player leaves.
+    @emit exit_room: notifies all clients within room to reset room state
+  */
+  socket.on("disconnect", () => {
+    io.to(roomID).emit("exit_room");
+    rooms.delete(roomID);
   })
 })
 
