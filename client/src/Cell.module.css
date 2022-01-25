@@ -9,19 +9,14 @@
     align-items: center;
     justify-content: center;
     background-color: var(--jeopardy-blue);
+    cursor: pointer;
+    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .cell h1 {
     margin: 0;
-}
-
-.cell.fullscreen {
-    z-index: 9999; 
-    width: 100vw; 
-    height: 100vh; 
-    position: fixed; 
-    top: 0;
-    left: 0;
-    font-size: 3.5rem;
-    text-shadow: 0 0;
 }

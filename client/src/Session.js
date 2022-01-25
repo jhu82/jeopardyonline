@@ -20,13 +20,14 @@ export default function Session() {
                 setRoom(room);
             })
             socketRef.current.on("update_room", (room) => {
-                console.log("Hello");
                 setRoom(room);
             })
             socketRef.current.on("error", (error) => {
                 alert(error);
             })
-			return () => socketRef.current.disconnect()
+			return () => {
+                socketRef.current.disconnect()
+            }
 		},
 		[]
 	)

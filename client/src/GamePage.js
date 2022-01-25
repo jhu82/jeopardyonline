@@ -15,26 +15,35 @@ export default function GamePage({ room, socketRef }) {
     const [haveAnswered, setHaveAnswered] = useState(false);
     const [answer, setAnswer] = useState("");
 
+    const resetState = () => {
+        setSelectedQuestion();
+        setMessage("");
+        setPlayerAnswering("");
+        setHaveAnswered(false);
+    }
+
     useEffect(
         () => {
             socketRef.current.on("question_sent", (question) => {
                 setMessage("");
                 setSelectedQuestion(question);
             })
-            socketRef.current.on("message", (message) => {
+            socketRef.current.on("message", (message, state) => {
+                if (state === "disable_input") {
+                    setPlayerAnswering("");
+                    setAnswer("");
+                } else if (state === "disable_buzzer") {
+                    setHaveAnswered(true);
+                }
                 setMessage(message);
             })
             socketRef.current.on("question_end", () => {
-                setSelectedQuestion();
-                setMessage("");
-                setPlayerAnswering("");
-                setHaveAnswered(false);
+                resetState();
             })
             socketRef.current.on("buzzer_pressed", (playerID) => {
                 setPlayerAnswering(playerID);
             })
             socketRef.current.on("incorrect_answer", () => {
-                setPlayerAnswering("");
                 socketRef.current.emit("question_selected", room.roomID, selectedQuestion.id);
             })
             return () => {
@@ -45,12 +54,13 @@ export default function GamePage({ room, socketRef }) {
     )
 
     const handleQuestionClick = (question) => {
+        if (question.answered) return;
         socketRef.current.emit("question_selected", room.roomID, question.id);
     }
 
     const handleAnswerInput = (event) => {
         event.preventDefault();
-        socketRef.current.emit("question_answered", socketRef.current.id, selectedQuestion.id, answer);
+        socketRef.current.emit("player_answered", room.roomID, socketRef.current.id, selectedQuestion.id, answer);
     }
 
     const handleBuzzerClick = () => {
@@ -89,32 +99,29 @@ export default function GamePage({ room, socketRef }) {
                                         </div>
                             })
     
-    const answerForm = () => {
-        if (!playerAnswering === socketRef.current.id) return;
-        return  <div>
-                    <form onSubmit={handleAnswerInput}>
-                        <input
-                            type="text"
-                            name="answer"
-                            placeholder="What is ______ ?"
-                            value={answer}
-                            autoComplete="off"
-                            onChange={e => {setAnswer(e.target.value)}}
-                        />
-                    </form>
-                </div>
-    }
+    const answerForm = (
+                        <form onSubmit={handleAnswerInput}>
+                            <input
+                                type="text"
+                                name="answer"
+                                placeholder="What is ______ ?"
+                                value={answer}
+                                autoComplete="off"
+                                onChange={e => {setAnswer(e.target.value)}}
+                            />
+                        </form>
+                        );
 
     return (
         <>
             {selectedQuestion ? <QuestionCard 
                                     question={selectedQuestion}
                                     message={message}
-                                    answer={answerForm()}
+                                    answer={(playerAnswering === socketRef.current.id) && answerForm}
                                     buzzer={
                                         <Buzzer 
                                             handleClick={() => handleBuzzerClick()}
-                                            haveAnswered={haveAnswered}
+                                            enabled={!playerAnswering && !haveAnswered}
                                         />
                                     }
                                 /> :

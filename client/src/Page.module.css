@@ -36,4 +36,5 @@
     background: #f6be18;
     color: var(--jeopardy-blue);
     border: none;
+    cursor: pointer;
 }

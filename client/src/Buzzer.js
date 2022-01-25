@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './Buzzer.module.css';
 
-export default function Buzzer({ handleClick, haveAnswered }) {
+export default function Buzzer({ handleClick, enabled }) {
     return (
         <>
-            { !haveAnswered && <div className={styles['buzzer']} onClick={handleClick} /> }
+            { enabled && <div className={styles['buzzer']} onClick={handleClick} /> }
         </>
     )
 }

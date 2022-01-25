@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import Buzzer from './Buzzer';
+import React from 'react';
 import styles from './QuestionCard.module.css';
 
 export default function QuestionCard({ question, message, answer, buzzer }) {
@@ -13,7 +12,9 @@ export default function QuestionCard({ question, message, answer, buzzer }) {
                 {message}
             </div>
             {buzzer}
-            {answer}
+            <div className={styles['answer-form']}>
+                {answer}
+            </div>
         </div>
     )
 }
