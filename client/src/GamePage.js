@@ -30,7 +30,7 @@ export default function GamePage({ room, socketRef }) {
             })
             socketRef.current.on("message", (message, state) => {
                 if (state === "disable_input") {
-                    setPlayerAnswering("");
+                    if (playerAnswering === socketRef.current.id) setPlayerAnswering("");
                     setAnswer("");
                 } else if (state === "disable_buzzer") {
                     setHaveAnswered(true);
@@ -44,6 +44,7 @@ export default function GamePage({ room, socketRef }) {
                 setPlayerAnswering(playerID);
             })
             socketRef.current.on("incorrect_answer", () => {
+                setPlayerAnswering("");
                 socketRef.current.emit("question_selected", room.roomID, selectedQuestion.id);
             })
             return () => {
@@ -54,17 +55,17 @@ export default function GamePage({ room, socketRef }) {
     )
 
     const handleQuestionClick = (question) => {
-        if (question.answered) return;
+        if (question.answered || room.hostID !== socketRef.current.id) return;
         socketRef.current.emit("question_selected", room.roomID, question.id);
     }
 
     const handleAnswerInput = (event) => {
         event.preventDefault();
-        socketRef.current.emit("player_answered", room.roomID, socketRef.current.id, selectedQuestion.id, answer);
+        socketRef.current.emit("player_answered", room.roomID, selectedQuestion.id, answer);
     }
 
     const handleBuzzerClick = () => {
-        socketRef.current.emit("buzzer_pressed", room.roomID, socketRef.current.id, selectedQuestion.id);
+        socketRef.current.emit("buzzer_pressed", room.roomID, selectedQuestion.id);
         setHaveAnswered(true);
     }
 

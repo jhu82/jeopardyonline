@@ -161,17 +161,16 @@ io.on("connection", socket => {
     given for if the answer is provided too late, which will count as an incorrect answer.
 
     @params roomID: ID of the room which the event took place
-    @params socketID: ID of the client who attempted to answer the question
     @params questionID: ID of the question to be answered
     @emit message: updates all clients in room that someone is attempting to answer the question
     @emit message: updates all clients that the player who pressed the buzzer is unable to answer the question. 
     @emit incorrect_answer: updates all clients that the incorrect answer was provided
   */
-  socket.on("buzzer_pressed", (roomID, socketID, questionID) => {
+  socket.on("buzzer_pressed", (roomID, questionID) => {
     const room = rooms.get(roomID);
     clearTimeout(room.timer);
     const question = findQuestion(room.questions, questionID);
-    const player = room.players.find(player => player.id === socketID);
+    const player = room.players.find(player => player.id === socket.id);
     const message = `${player.name} is answering...`;
     io.to(roomID).emit("message", message);
     io.to(roomID).emit("buzzer_pressed", player.id);
@@ -190,38 +189,33 @@ io.on("connection", socket => {
     updated accordingly.
 
     @params roomID: ID of the room which the event took place
-    @params socketID: ID of the client who attempted to answer the question
     @params questionID: ID of the question to be answered
     @params answer: Attempted answer provided by the client
     @emit message: notify all clients whether the provided answer was correct or incorrect
     @emit question_end: notifies clients that the question is ended so they can update their state accordingly
     @emit update_room: sends updated room reflecting current game state
   */
-  socket.on("player_answered", (roomID, socketID, questionID, answer) => {
+  socket.on("player_answered", (roomID, questionID, answer) => {
     const room = rooms.get(roomID);
     clearTimeout(room.timer);
     const question = findQuestion(room.questions, questionID);
-    const player = room.players.find(player => player.id === socketID);
+    const player = room.players.find(player => player.id === socket.id);
     if (compareAnswer(question.answer, answer)) {
+      const message = `${player.name} answered ${answer}. This is the correct answer!`
+      io.to(roomID).emit("message", message, "disable_input");
       room.timer = setTimeout(() => {
-        const message = `${player.name} answered ${answer}. This is the correct answer!`
-        io.to(roomID).emit("message", message, "disable_input");
-        setTimeout(() => {
-          question.answered = true;
-          player.money += question.value;
-          room.hostID = socketID;
-          io.to(roomID).emit("question_end");
-          io.to(roomID).emit("update_room", room);
-        }, 3000)
+        question.answered = true;
+        player.money += question.value;
+        room.hostID = socket.id;
+        io.to(roomID).emit("question_end");
+        io.to(roomID).emit("update_room", room);
       }, 3000);
     } else {
+      const message = `${player.name} answered ${answer}. This is incorrect.`;
+      io.to(roomID).emit("message", message, "disable_input");
       room.timer = setTimeout(() => {
-        const message = `${player.name} answered ${answer}. This is incorrect.`;
-        io.to(roomID).emit("message", message, "disable_input");
-        setTimeout(() => {
-          player.money -= question.value;
-          io.to(roomID).emit("incorrect_answer");
-        }, 2000)
+        player.money -= question.value;
+        io.to(roomID).emit("incorrect_answer");
       }, 5000);
     }
   })
